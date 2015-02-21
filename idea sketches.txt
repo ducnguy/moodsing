@@ -1,0 +1,19 @@
+1. modulate sine frequency with brainwave
+	1. find js sound generator
+	2. then, map emotive output --> generator
+		1. how does that work? similar to requestAnimationFrame()?
+2. process raw emotiv data better.
+	1. average over time interval?
+	2. peak over time interval?
+	3. don't want music to abruptly change because of lapse in concentration to feed emotiv.
+
+## Sound details
+- sampled from Rusoto - like sound
+
+## Parameters to use from Emotiv channels
+- Excitement vs Calm - used for drum beat because this feedback loop could be reliable
+- Stress - everything else
+
+## Ideas for modulating music
+- cutoff frequency modulated for background pad
+- intensity of some parameter brings in loops in the next bar
