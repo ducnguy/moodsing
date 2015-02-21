@@ -11,6 +11,7 @@ var direction = 0;
 
 var arpActive = true;
 
+// all arp effects
 var arpStep = 0;
 var arp = new Tone.FMSynth();
 var pingPong = new Tone.PingPongDelay('8n');
@@ -21,15 +22,16 @@ pingPong.connect(arpFilter);
 arpFilter.toMaster();
 arpFilter.frequency.setValue(1500);
 
-Tone.Transport.loop = true;
+// all transport commands
+
+/*Tone.Transport.loop = true;
 Tone.Transport.setLoopStart('0:0');
 Tone.Transport.setLoopEnd('2:0');
 Tone.Transport.setBpm(100);
 Tone.Transport.start();
 Tone.Transport.setInterval(triggerArp, '16n');
-
-
-function triggerArp(time) {
+/*
+/*function triggerArp(time) {
   this.scale = harMinor;
   if (arpActive) {
     var n = midiToFreq(root + this.scale[arpStep % this.scale.length]);
@@ -37,23 +39,39 @@ function triggerArp(time) {
     arp.triggerRelease(n, time + arp.toSeconds('16n'));
 
     arpStep++;
-    /*switch (direction) {
-    case 0:
-      arpStep++;
-      break;
-    case 1:
-      arpStep--;
-      break;
-    }*/
-    /*if (arpStep >= data.triangleNumber) {
-      arpStep = 0;
-    } else if (arpStep < 0) {
-      arpStep = data.triangleNumber;
-    }*/
 
   }
-}
+}*/
+
+/*SEQUENCER TEST*/
+
+var sequence = ["4n", "4n", "8n", "8n", "4n"];
+
+
+// Various conversion functions
+
+play_rhythmToInterval = function (rhythm) {
+  // todo: error checking to fulfill full 4-count
+  var i = 0; // index for rhythm
+  function nextNote(note) {
+    this.scale = harMinor;
+    Tone.Transport.setTimeout(function(time){
+        var n = midiToFreq(root + this.scale[arpStep % this.scale.length]);
+        arp.triggerAttack(n, time, 1);
+        arp.triggerRelease(n, time + arp.toSeconds('16n'));
+        nextNote(rhythm[i++]);
+    }, note);
+  }
+  nextNote(rhythm[i]);
+};
 
 midiToFreq = function (m) {
   return 440 * Math.pow(2, (m - 69) / 12.0);
 };
+
+Tone.Transport.loop = true;
+Tone.Transport.setLoopStart('0:0');
+Tone.Transport.setLoopEnd('1:0');
+Tone.Transport.setBpm(100);
+Tone.Transport.start();
+Tone.Transport.setInterval(play_rhythmToInterval(sequence), '1:0');
