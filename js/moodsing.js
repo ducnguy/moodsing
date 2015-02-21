@@ -11,14 +11,13 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.01, 1000);
 var controls = new THREE.FirstPersonControls(camera);
 camera.position.y = .2;
-camera.position.z = -10;
 controls.handleResize();
 controls.noFly = true;
 controls.lookVertical=true;
 controls.lookSpeed = 0.07;
 controls.movementSpeed = 2.5;
 
-var ambientLight   = new THREE.AmbientLight( 0x020202 )
+var ambientLight   = new THREE.AmbientLight( 0xd9d9d9 )
 scene.add( ambientLight )
 
 // ENVIRONMENT AND EFFECTS
@@ -39,18 +38,18 @@ var object3d    = new THREE.Mesh(geometry, grassMaterial)//create mesh
 object3d.rotateX(-Math.PI/2)
 scene.add(object3d)
 //skysphere
-var geometry = new THREE.SphereGeometry(4, 20, 20);
-var skyTextureUrl = 'img/neuron_square.jpg'
+var geometry = new THREE.SphereGeometry(1000, 20, 20);
+var skyTextureUrl = 'img/electric-bg.png'
 var skyTexture = THREE.ImageUtils.loadTexture(skyTextureUrl)
 skyTexture.wrapS = THREE.RepeatWrapping
 skyTexture.wrapT = THREE.RepeatWrapping
-skyTexture.repeat.set(15,10);
+skyTexture.repeat.set(1,1);
 
 var skyMaterial = new THREE.MeshLambertMaterial({map:skyTexture});
 
 skySphere = new THREE.Mesh(geometry, skyMaterial);
 skySphere.scale.set(-1, 1, 1);
-skySphere.position.set( -9, 0,0 );
+skySphere.position.set( 0, 0,0 );
 skySphere.rotation.order = 'XZY';
 skySphere.renderDepth = 1000.0;
 scene.add(skySphere);
@@ -62,15 +61,6 @@ var material_sphere1 = new THREE.MeshLambertMaterial( { color: 0xffaa00, shading
 var mesh1 = new THREE.Mesh( sphere, material_sphere1 );
 mesh1.position.set( 0, .2,.577 );
 scene.add( mesh1 );*/
-
-//cube
-var cubeGeometry = new THREE.BoxGeometry(5,5,5);
-var cubeTexture = THREE.ImageUtils.loadTexture( 'img/neuron_square.jpg' );
-var cubeMaterial = new THREE.MeshLambertMaterial({map:cubeTexture});
-var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-cube.position.set (0,0,0);
-scene.add(cube);
-
 
 //ANIMATION
 function animate() {
