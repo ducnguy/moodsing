@@ -1,4 +1,4 @@
-var root = 48;
+/*var root = 48;
 var scale = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36];
 var pentatonic = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36];
 var major = [0, 4, 7, 12, 16, 19, 24, 28, 31];
@@ -7,53 +7,13 @@ var harMinor = [0, 2, 3, 5, 7, 8, 11, 12, 14, 15, 17, 19, 20, 23, 24];
 var sus = [0, 5, 7, 12, 17, 19, 24, 29, 31];
 var minSev = [0, 3, 7, 10, 12, 15, 19, 22];
 var octaves = [-24, -12, 0, 12, 24, 36, 48];
-var direction = 0;
+var direction = 0;*/
 
-var arpActive = true;
+//var arpActive = true;
 
 /*SEQUENCER TEST*/
 
-var sequence = ["4n", "16n", "16n", "16n", "16n", "8n", "8n", "4n"];
-
-
-// Various conversion functions
-/*
-play_rhythmToInterval = function (rhythm) {
-  // todo: error checking to fulfill full 4-count
-  var i = 0; // index for rhythm
-  function nextNote(note) {
-    this.scale = major;
-    console.log(note);
-    Tone.Transport.setTimeout(function(time){
-        var n = midiToFreq(root + this.scale[arpStep % this.scale.length]);
-        console.log("freq: " + n)
-        arp.triggerAttack(n, time, 1);
-        arp.triggerRelease(n, time + arp.toSeconds('16n'));
-        if (i < rhythm.length)
-          nextNote(rhythm[i++]);
-        arpStep++;
-    }, note);
-  }
-  nextNote(rhythm[i]);
-};
-
-midiToFreq = function (m) {
-  return 440 * Math.pow(2, (m - 69) / 12.0);
-};*/
-/*
-Tone.Transport.loop = true;
-Tone.Transport.setLoopStart('0:0');
-Tone.Transport.setLoopEnd('1:0');
-Tone.Transport.setBpm(100);
-play_rhythmToInterval(sequence);
-Tone.Transport.start();
-Tone.Transport.setInterval(function() {
-  play_rhythmToInterval(sequence);
-}, '1:0');
-*/
-
-
-
+// var sequence = ["4n", "16n", "16n", "16n", "16n", "8n", "8n", "4n"];
 
 
 /* global Tone, GUI*/
@@ -63,19 +23,7 @@ bass.setPreset("Bassy");
 bass.setVolume(-10);
 bass.toMaster();
 
-/*var arp = Tone.FMSynth;
-//arp.toMaster();
-var pingPong = new Tone.PingPongDelay('32n');
-pingPong.setFeedback(0.6);
-arp.connect(pingPong);
-arpFilter = new Tone.Filter();
-pingPong.connect(arpFilter);
-//arpFilter.toMaster();
-arpFilter.frequency.setValue(1500);
-*/
-//var keys = new Tone.PolySynth(3, Tone.MonoSynth, Tone.MonoSynth.prototype.preset.Pianoetta);
-var keys = new Tone.PolySynth(3, Tone.FMSynth)
-keys.setVolume(-30);
+var keys = new Tone.PolySynth(1, Tone.FMSynth)
 keys.toMaster();
 
 var kit = new Tone.MultiSampler({
@@ -88,7 +36,7 @@ var kit = new Tone.MultiSampler({
 /*  $("#Loading").remove();
   startButton.enable();*/
 });
-kit.setVolume(-10);
+kit.setVolume(-20);
 kit.toMaster();
 
 var Score = {
@@ -100,7 +48,8 @@ var Score = {
   //if the array is composed of other arrays time is the first value
   //the rest of the values are given to the callback in order
   //"bass" : [["0:0", "C2", "2n"], ["0:3:2", "C3", "8n"]],
-  "keys" : [["0:0:2", ["E4", "G4", "A4"]], ["0:0:3", ["E4", "G4", "A4"]], ["0:1:3", ["E4", "G4", "A4"]]],
+  "keys" : [["0:0:0", ["C3"]], ["0:0:3", ["C3"]], ["0:1:2", ["C3"]],
+  ["0:2:0", ["C3"]], ["0:2:3", ["C3"]], ["0:3:2", ["C3"]]]
 };
 
 //create events for all of the notes
@@ -115,19 +64,14 @@ Tone.Note.route("keys", function(time, value){
   var velocity = Math.random() * 0.5 + 0.4;
   for (var i = 0; i < value.length; i++) {
     keys.triggerAttackRelease(value[i], "16n", time, velocity);
-    //arp.toMaster();
-    var pingPong = new Tone.PingPongDelay('32n');
-    pingPong.setFeedback(0.6);
-    keys.connect(pingPong);
-    arpFilter = new Tone.Filter();
-    pingPong.connect(arpFilter);
-    arpFilter.toMaster();
-    arpFilter.frequency.setValue(1500);
+    keys.setVolume(-7);
   }
 });
+
 Tone.Note.route("drums", function(time){
   kit.triggerAttack("drums", time);
 });
+
 /*Tone.Note.route("kick", function(time){
   kit.triggerAttack("kick", time);
 });
@@ -137,6 +81,7 @@ Tone.Note.route("snare", function(time){
 Tone.Note.route("hh", function(time){
   kit.triggerAttack("hh", time);
 });*/
+
 /*
 //setup the transport looping
 */
@@ -144,9 +89,28 @@ Tone.Transport.setLoopStart(0);
 Tone.Transport.setLoopEnd("1:0");
 Tone.Transport.loop = true;
 Tone.Transport.setBpm(120);
-Tone.Transport.start()
+Tone.Transport.start();
 
 
+Parse.initialize("sItbGUy6bQbGS1dqE9J7hlCKI8YmYfRSz3hxkqH9", "5HVZFYNDsw2boymo2Fq2lFFE4olD6yM3BnSJ5XQq");
+
+var EmotivModulations = Parse.Object.extend("moodMetrics");
+var query =  new Parse.Query(EmotivModulations);
+query.descending("createdAt")
+query.limit(1)
+function latestMod() {
+  return query.find({
+  success: function(obj) {
+    console.log(obj)
+  }
+});
+}
+//var modulationQuery = new Parse.Query(EmotivModulations);
+
+// Poll for Emotiv changes
+Tone.Transport.setInterval(function() {
+  console.log(latestMod());
+}, "1:0");
 
 /*// GUI //
 
@@ -162,3 +126,6 @@ var startButton = new GUI.Checkbox(content, function(down){
   }
 }, "start", "stop");
 startButton.disable();*/
+
+
+
