@@ -15,27 +15,38 @@ test = test.sma(3);
 console.log(test);
 console.log(test.delta().distribution('relative'));
 
-var lv3_scale = [0, 4, 7, 12, 16, 19, 24, 28, 31]; // major
-var lv2_scale = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36]; // penta
-var lv1_scale = [0, 3, 7, 12, 15, 19, 24, 27, 31]; //minor
+var lv1_scale = [0, 4, 7, 12, 16, 19, 24, 28, 31]; // major
+var lv4_scale = [0, 2, 3, 5, 7, 8, 11, 12, 14, 15, 17, 19, 20, 23, 24]; // harm minor
+var lv3_scale = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36]; // penta
+var lv2_scale = [0, 3, 7, 12, 15, 19, 24, 27, 31]; //minor
 var semitones = ["C2", "C#2", "D2", "D#2", "E2", "F2", "F#2", "G2", "G#2", "A2", "A#2", "B2", "C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3", "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4"];
 
 function genSequence(lv) {
   var sequence = new Array();
   var scaleName = "lv" + lv + "_scale";
   var index = 0;
-  for (var i = 0; i < 8; i++) {
-    //index = Math.floor(Math.random()*5);
+  for (var i = 0; i < 16; i++) {
+    index = Math.floor(Math.random()*5);
     //console.log(eval(scaleName)[index]);
     sequence.push(
-      [ (i + "*8n").toString(),
-        [ semitones[ eval(scaleName)[index++] ] ]
+      [ (i + "*16n").toString(),
+        [ semitones[ eval(scaleName)[index] ] ]
       ]
     );
   }
+  var rhythmSeq = []
+  for (var i = 0; i<16; i++){
+    include = Math.floor(Math.random()*4)-1
+    if (include==1) {
+      rhythmSeq.push(sequence[i])
+    }
+  }
+
+
+
   console.log(scaleName);
-  console.log(sequence);
-  return sequence;
+  console.log(rhythmSeq.length);
+  return rhythmSeq;
 }
 
 var seq;
@@ -136,25 +147,28 @@ Parse.initialize("sItbGUy6bQbGS1dqE9J7hlCKI8YmYfRSz3hxkqH9", "5HVZFYNDsw2boymo2F
 var EmotivModulations = Parse.Object.extend("moodMetrics");
 var query =  new Parse.Query(EmotivModulations);
 query.descending("createdAt");
-var smaLimit = 3;
+var smaLimit = 1;
 query.limit(smaLimit)
 function latestMod(modulateParm) {
   query.find({
     success: function(obj) {
       var valence_ary = new Array(), excitement_ary = new Array();
-      obj.forEach(function(el) {
+      /*obj.forEach(function(el) {
         valence_ary.push(el.get("valence"));
         excitement_ary.push(el.get("excitement"));
-      });
-      console.log(excitement_ary);
+      });*/
+/*      console.log(excitement_ary);
       valence_ary = valence_ary.toVector();
       excitement_ary = excitement_ary.toVector();
       valence_ary = valence_ary.sma(smaLimit);
       excitement_ary = excitement_ary.sma(smaLimit);
       console.log(excitement_ary);
       console.log(excitement_ary.delta());
+
       var valence = valence_ary[0];
-      var excitement = excitement_ary[0];
+      var excitement = excitement_ary[0];*/
+      var valence = obj[0].get("valence");
+      var excitement = obj[0].get("excitement");
       modulateParm({"valence": valence, "excitement": excitement});
     }
   });
@@ -164,12 +178,13 @@ var MIN_HEARING = -15;
 var MAX_HEARING = -2;
 
 // set volume threshholds
-/*var low_minTH = 0;
-var mid_minTH = 4;
-var hi_minTH = 8;*/
-var low_minTH = 0.4;
-var mid_minTH = 0.55;
-var hi_minTH = 0.7;
+/*var minTH_1 = 0;
+var minTH_2 = 4;
+var minTH_3 = 8;*/
+var minTH_1 = 0;
+var minTH_2 = 0.2;
+var minTH_3 = 0.5;
+var minTH_4 = 0.7;
 
 
 // Poll for Emotiv changes
@@ -178,21 +193,20 @@ Tone.Transport.setInterval(function() {
     console.log("excitement:" + val.excitement + " valence: " + val.valence);
 
     // Volume modulated by valence
-    if (val.valence > low_minTH && val.valence < mid_minTH) {
-      console.log("valence > LOW")
+    if (val.excitement > minTH_1 && val.excitement < minTH_2) {
       //lv1.setVolume(-12);
       seq = genSequence(1);
     }
-    else if (val.valence > mid_minTH && val.valence < hi_minTH) {
-      console.log("valence > MID")
+    else if (val.excitement > minTH_2 && val.excitement < minTH_3) {
       //lv2.setVolume(-12)
       seq = genSequence(2);
     }
-    else if (val.valence > hi_minTH) {
-      console.log("valence > HI")
+    else if (val.excitement > minTH_3 && val.excitement < minTH_4) {
       //lv3.setVolume(-12);
       seq = genSequence(3);
     }
+    else if (val.excitement > minTH_4)
+      seq = genSequence(4);
 
     var Score = {
       "kick" : ["0", "0:2:2", "0:3:1"],
@@ -221,7 +235,7 @@ Tone.Transport.setInterval(function() {
     // TODO: use cutoff instead of volume
     var excitement = -20 + ((val.excitement - 0.5) * 35);
     kit.setVolume(-40);
-    Tone.Transport.setBpm(10 + val.valence * 120);
+    Tone.Transport.setBpm(60 + val.valence * 40);
     console.log("adjusted excitement: " + excitement );
     console.log("\n");
   })
