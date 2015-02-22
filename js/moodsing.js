@@ -38,30 +38,28 @@ var object3d    = new THREE.Mesh(geometry, grassMaterial)//create mesh
 object3d.rotateX(-Math.PI/2)
 scene.add(object3d)
 //skysphere
-var geometry = new THREE.SphereGeometry(1000, 20, 20);
-var skyTextureUrl = 'img/electric-bg.png'
+var skyGeometry = new THREE.SphereGeometry(300, 20, 20);
+var skyTextureUrl = 'img/electric-bg_masked.png'
 var skyTexture = THREE.ImageUtils.loadTexture(skyTextureUrl)
 skyTexture.wrapS = THREE.RepeatWrapping
 skyTexture.wrapT = THREE.RepeatWrapping
-skyTexture.repeat.set(1,1);
-
-var skyMaterial = new THREE.MeshLambertMaterial({map:skyTexture});
-
-skySphere = new THREE.Mesh(geometry, skyMaterial);
+skyTexture.repeat.set(4,4);
+var skyMaterial = new THREE.MeshPhongMaterial({map:skyTexture,emissive:'blue',transparent:true});
+skySphere = new THREE.Mesh(skyGeometry, skyMaterial);
 skySphere.scale.set(-1, 1, 1);
 skySphere.position.set( 0, 0,0 );
 skySphere.rotation.order = 'XZY';
 skySphere.renderDepth = 1000.0;
 scene.add(skySphere);
-var sphereSpotlight = new THREE.DirectionalLight( 0xffffff );
+/*var sphereSpotlight = new THREE.DirectionalLight( 0xffffff );
 sphereSpotlight.position.set( 1, 1, -2 ).normalize();
-scene.add( sphereSpotlight );
-/*var sphere = new THREE.SphereGeometry( .2,20,20);
-var material_sphere1 = new THREE.MeshLambertMaterial( { color: 0xffaa00, shading: THREE.FlatShading } );
-var mesh1 = new THREE.Mesh( sphere, material_sphere1 );
-mesh1.position.set( 0, .2,.577 );
-scene.add( mesh1 );*/
-
+scene.add( sphereSpotlight );*/
+//skybg
+var skybgGeometry = new THREE.SphereGeometry(3001, 20, 20);
+var skybgTexture = skyMaterial = new THREE.MeshLambertMaterial()
+var skybgSphere = new THREE.Mesh(skybgGeometry,skyMaterial)
+skybgSphere.scale.set(-1, 1, 1);
+scene.add(skybgSphere)
 //ANIMATION
 function animate() {
     requestAnimationFrame(animate);
