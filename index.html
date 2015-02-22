@@ -2,28 +2,31 @@
     <head>
         <script src="js/three.min.js"></script>
 		<script src="js/threex.grass.js"></script>
+		<style>
+			#button {
+				font-family: "arial";
+				position: fixed;
+				top: 20px;
+				right: 20px;
+				padding: 8px;
+				color: #fff;
+				background-color: #555;
+				opacity:0.7;
+			}
+
+		</style>
     </head>
     <body style='margin: 0px; overflow: hidden;'>
     	<script src="js/DMN_Audio.js"></script>
     	<script src="js/FirstPersonControls.js"></script>
-    	<script type="application/x-glsl" id="sky-vertex">
-			varying vec2 vUV;
-
-			void main() {
-			  vUV = uv;
-			  vec4 pos = vec4(position, 1.0);
-			  gl_Position = projectionMatrix * modelViewMatrix * pos;
-			}
-		</script>
-		<script type="application/x-glsl" id="sky-fragment">
-			uniform sampler2D texture;
-			varying vec2 vUV;
-
-			void main() {
-			  vec4 sample = texture2D(texture, vUV);
-			  gl_FragColor = vec4(sample.xyz, sample.w);
-			}
-		</script>
+		<script src='js/dat.gui.min.js'></script>
+        <script src="js/ColladaLoader.js"></script>
+        <script src="js/OBJMTLLoader.js"></script>
+        <script src="js/OculusRiftEffect.js"></script>
+        <script src="js/OculusControls.js"></script>
+        <script src="js/SkyShader.js"></script>
+        <script src="js/stats.min.js"></script>
         <script src="js/moodsing.js"></script>
+        <div id="button" style> End Demo </div>
     </body>
 </html>
